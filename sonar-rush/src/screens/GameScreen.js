@@ -45,6 +45,8 @@ export default function GameScreen({ onGameOver }) {
   }).current;
 
   /* ─── sonar emit ─── */
+  const effectiveSonarRadius = Math.max(SONAR_RADIUS, width * 0.45);
+
   const emitSonar = useCallback(() => {
     const px = playerX.value;
     const wave = { id: Date.now(), x: px, y: PLAYER_Y };
@@ -53,7 +55,7 @@ export default function GameScreen({ onGameOver }) {
     game.obstacles.forEach((obs) => {
       const cx = obs.x + obs.width / 2;
       const cy = obs.y + obs.height / 2;
-      if (Math.hypot(cx - px, cy - PLAYER_Y) < SONAR_RADIUS) {
+      if (Math.hypot(cx - px, cy - PLAYER_Y) < effectiveSonarRadius) {
         obs.revealed = true;
         obs.revealExpiry = Date.now() + SONAR_REVEAL_DURATION;
       }
@@ -62,7 +64,7 @@ export default function GameScreen({ onGameOver }) {
     setTimeout(() => {
       setSonarWaves((prev) => prev.filter((w) => w.id !== wave.id));
     }, SONAR_WAVE_DURATION + 100);
-  }, [PLAYER_Y, game, playerX]);
+  }, [PLAYER_Y, game, playerX, effectiveSonarRadius]);
 
   /* ─── gestures ─── */
   const pan = Gesture.Pan()
@@ -156,7 +158,7 @@ export default function GameScreen({ onGameOver }) {
         ))}
 
         {sonarWaves.map((w) => (
-          <SonarWave key={w.id} x={w.x} y={w.y} />
+          <SonarWave key={w.id} x={w.x} y={w.y} maxRadius={effectiveSonarRadius} />
         ))}
 
         <Player x={playerX} y={PLAYER_Y} size={PLAYER_SIZE} />

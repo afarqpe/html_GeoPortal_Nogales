@@ -7,12 +7,13 @@ import Animated, {
 } from 'react-native-reanimated';
 import { SONAR_RADIUS, SONAR_WAVE_DURATION, COLORS } from '../engine/constants';
 
-export default function SonarWave({ x, y }) {
+export default function SonarWave({ x, y, maxRadius }) {
+  const targetRadius = maxRadius || SONAR_RADIUS;
   const radius = useSharedValue(0);
   const opacity = useSharedValue(0.9);
 
   useEffect(() => {
-    radius.value = withTiming(SONAR_RADIUS, {
+    radius.value = withTiming(targetRadius, {
       duration: SONAR_WAVE_DURATION,
       easing: Easing.out(Easing.quad),
     });
