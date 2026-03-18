@@ -25,3 +25,30 @@ Then open `http://localhost:8000` in a browser.
 - There are no lint, test, or build steps — the codebase is a pre-built static export.
 - External tile services (Google Maps, OpenStreetMap) and the Photon geocoding API are fetched at runtime in the browser; no API keys are required.
 - No environment variables or secrets are needed.
+
+### Sonar Rush (Expo/React Native game)
+
+Located in `sonar-rush/`. A hypercasual 2D mobile game built with Expo SDK 55, React Native, and react-native-reanimated.
+
+**Running:**
+```
+cd sonar-rush
+npm install
+npx expo start --web --port 8081
+```
+
+Open `http://localhost:8081` in a browser. The game also runs on iOS/Android via Expo Go.
+
+**Architecture:**
+- `App.js` — root, manages screen state (playing/gameover) and death counter
+- `src/screens/GameScreen.js` — 60fps game loop with `requestAnimationFrame`, gesture handling, collision detection
+- `src/screens/GameOverScreen.js` — score display, high score (AsyncStorage), replay
+- `src/components/` — Player (reanimated), Obstacle, SonarWave (reanimated), AdPlaceholder
+- `src/engine/` — constants, AABB collision
+- `src/utils/storage.js` — AsyncStorage wrapper for high score
+
+**Key notes:**
+- Babel config requires `react-native-reanimated/plugin` (already in `babel.config.js`).
+- Shadow styles use `Platform.select` for web (`boxShadow`) vs native (`shadowColor` etc.).
+- Sonar radius scales adaptively: `max(200px, 45% of screen width)` for proper gameplay on wide screens.
+- AdMob placeholders are in place; integrate `react-native-google-mobile-ads` when ready.
